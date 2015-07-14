@@ -1,6 +1,4 @@
-bin
-include
-lib
+venv
 .vagrant
 .idea
 pip-selfcheck.json

@@ -20,7 +20,7 @@
     command: /usr/bin/pip3 install virtualenv==13.0.1
 
   - name: Install Requirements
-    pip: chdir=/vagrant requirements=/vagrant/requirements.txt virtualenv=/home/vagrant/venv/viewflow
+    pip: chdir=/vagrant requirements=/vagrant/requirements.txt virtualenv=/vagrant/venv/
     sudo: yes
 
   - name: Create Database

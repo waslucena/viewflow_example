@@ -4,6 +4,6 @@ fi
 
 cd /vagrant
 
-source ~/venv/viewflow/bin/activate
+source /vagrant/venv/bin/activate
 
 
