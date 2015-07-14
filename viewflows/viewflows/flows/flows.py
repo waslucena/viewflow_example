@@ -10,15 +10,7 @@ class HelloWorldFlow(Flow):
 
     start = flow.Start(StartProcessView, fields=["text"]) \
         .Permission(auto_create=True) \
-        .Next(this.check)
-
-    check = flow.View(ProcessView, fields=["checked"]) \
-        .Permission(auto_create=True) \
-        .Next(this.validate_check)
-
-    validate_check = flow.If(cond=lambda p: p.checked) \
-        .OnTrue(this.approve) \
-        .OnFalse(this.end)
+        .Next(this.approve)
 
     approve = flow.View(ProcessView, fields=["approved"]) \
         .Permission(auto_create=True) \
