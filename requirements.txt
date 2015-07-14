@@ -1,0 +1,6 @@
+Django==1.8.2
+mysqlclient
+celery
+django-viewflow
+django-adminplus
+django-object-actions
