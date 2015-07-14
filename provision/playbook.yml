@@ -2,10 +2,6 @@
 - hosts: all
   sudo: yes
 
-  roles:
-  - role: angstwad.docker_ubuntu
-    docker_opts: "-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"
-
   tasks:
   - name: General | Install required packages.
     action: apt pkg={{ item }} state=installed update_cache=yes
@@ -14,26 +10,22 @@
       - build-essential
       - mysql-server
       - mysql-client
-      - redis-server
-      - memcached
       - python-virtualenv
-      - wget
-      - git
-      - bar
       - python3-dev
       - python3-apt
       - python3-pip
       - libmysqlclient-dev
-      - libxml2-dev
-      - libxslt-dev
-      - libssl-dev
-      - libopenblas-dev
-      - liblapack-dev
 
   - name: Update virtualenv
     command: /usr/bin/pip3 install virtualenv==13.0.1
 
   - name: Install Requirements
-    pip: chdir=/vagrant virtualenv=/home/vagrant/venv/viewflow executable=/usr/bin/pip3
+    pip: chdir=/vagrant requirements=/vagrant/requirements.txt virtualenv=/home/vagrant/venv/viewflow
     sudo: yes
-    sudo_user: vagrant
+
+  - name: Create Database
+    shell: mysql -u root -e "create database viewflows";
+    ignore_errors: yes
+
+  - name: Helpfull bash_profile
+    copy: src=bash_profile dest=/home/vagrant/.bash_profile force=no
