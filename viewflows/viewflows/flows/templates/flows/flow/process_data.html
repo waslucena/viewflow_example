@@ -1,13 +1,17 @@
 <div class="row">
-    {% for root, fields in process_data %}
+    {% for root, fields, url in process_data %}
     <div class="col-lg-3">
+    {% if url %}
+        <h4>{{ root }} : <a href="{{ url }}">{{ fields.0.1 }}</a></h4>
+    {% else %}
         <h4>{{ root }}</h4>
         <dl class="dl-horizontal">
             {% for name, value in fields %}
-            <dt>{{ name }}:</dt> 
+            <dt>{{ name }}:</dt>
             <dd>{{ value }}</dd>
             {% endfor %}
         </dl>
+    {% endif %}
     </div>
     {% endfor %}
 </div>
