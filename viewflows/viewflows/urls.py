@@ -17,12 +17,10 @@ from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from viewflow import views as viewflow
-from .flows.flows import HelloWorldFlow, PublishPollFlow
+from .flows.flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow
 
 admin.site = AdminSitePlus()
 admin.autodiscover()
-
-flow_classes = [HelloWorldFlow, PublishPollFlow]
 
 urlpatterns = [
     url(r'^admin/helloworld',
@@ -47,6 +45,14 @@ urlpatterns = [
             ],
             namespace=PublishPollFlow.instance.namespace),
         {'flow_cls': PublishPollFlow}),
+    url(r'^admin/errorpoll',
+        include([
+            PollErrorFlow.instance.urls,
+            url('^details/(?P<process_pk>\d+)/$',
+                viewflow.ProcessDetailView.as_view(), name='details')
+            ],
+            namespace=PollErrorFlow.instance.namespace),
+        {'flow_cls': PollErrorFlow}),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

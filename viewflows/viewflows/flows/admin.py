@@ -1,6 +1,6 @@
 from django.contrib import admin
 from viewflow import views as viewflow
-from .flows import HelloWorldFlow, PublishPollFlow
+from .flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow
 
 # A HelloWorldFlow processes menus
 hello_world_flow_cls = HelloWorldFlow
@@ -43,7 +43,7 @@ admin.site.register_view('publishpoll/queue', 'Update Poll Queue',     view=upda
 
 
 # All Flows processes menus
-all_flow_classes = [HelloWorldFlow, PublishPollFlow]
+all_flow_classes = [HelloWorldFlow, PublishPollFlow, PollErrorFlow]
 
 def all_process_list_view(request, *args, **kwargs):
     return viewflow.AllProcessListView.as_view(flow_classes=all_flow_classes)(request, *args, **kwargs)

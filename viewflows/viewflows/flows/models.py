@@ -9,3 +9,6 @@ class HelloWorldProcess(Process):
 class PollProcess(Process):
     question = models.ForeignKey('polls.Question', verbose_name='Question')
     approved = models.BooleanField(default=False)
+
+class PollErrorProcess(Process):
+    question = models.ForeignKey('polls.Question', verbose_name='Question')
