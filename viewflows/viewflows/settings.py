@@ -37,11 +37,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'viewflow',
     'flows',
     'polls',
     'adminplus',
     'django_object_actions',
+    'viewflow',
 )
 
 MIDDLEWARE_CLASSES = (
