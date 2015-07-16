@@ -46,13 +46,13 @@ admin.site.register_view('publishpoll/queue', 'Update Poll Queue',     view=upda
 all_flow_classes = [HelloWorldFlow, PublishPollFlow, PollErrorFlow]
 
 def all_process_list_view(request, *args, **kwargs):
-    return viewflow.AllProcessListView.as_view(flow_classes=all_flow_classes)(request, *args, **kwargs)
+    return viewflow.AllProcessListView.as_view(flow_classes=all_flow_classes, app_label='flows')(request, *args, **kwargs)
 
 def all_tasks_list_view(request, *args, **kwargs):
-    return viewflow.AllTaskListView.as_view(flow_classes=all_flow_classes)(request, *args, **kwargs)
+    return viewflow.AllTaskListView.as_view(flow_classes=all_flow_classes, app_label='flows')(request, *args, **kwargs)
 
 def all_queue_list_view(request, *args, **kwargs):
-    return viewflow.AllQueueListView.as_view(flow_classes=all_flow_classes)(request, *args, **kwargs)
+    return viewflow.AllQueueListView.as_view(flow_classes=all_flow_classes, app_label='flows')(request, *args, **kwargs)
 
 
 admin.site.register_view('workflows', 'Processes', view=all_process_list_view)
