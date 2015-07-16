@@ -7,6 +7,7 @@ from .models import Choice, Question
 
 from django_object_actions import DjangoObjectActions
 from ..flows.flows import PublishPollFlow, HelloWorldFlow
+from ..flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal, PollErrorFlow
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -44,5 +45,18 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
     hello_world.short_description = "Start Hello World process"
 
     objectactions = ('publish_this', 'hello_world')
+
+    def save_model(self, request, obj, form, change):
+        super(QuestionAdmin, self).save_model(request, obj, form, change)
+        try:
+            process = PollErrorFlow.process_cls.objects.get(question=obj, status='NEW')
+        except PollErrorFlow.process_cls.DoesNotExist:
+            process = None
+        if 'cool' not in obj.question_text:
+            if not process:
+                StartPollErrorFlowSignal.send(sender=Question.__class__, question=obj, owner=request.user)
+        else:
+            if process:
+                ResolvePollErrorFlowSignal.send(sender=Question.__class__, process=process, owner=request.user)
 
 admin.site.register(Question, QuestionAdmin)

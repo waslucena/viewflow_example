@@ -58,11 +58,13 @@ class PublishPollFlow(Flow):
     end = flow.End()
 
 
-StartPollErrorFlowSignal = Signal(providing_args=["question"])
-ResolvePollErrorFlowSignal = Signal(providing_args=["process"])
+StartPollErrorFlowSignal = Signal(providing_args=["question", "owner"])
+ResolvePollErrorFlowSignal = Signal(providing_args=["process", "owner"])
 
 def start_poll_error_flow(activation, **kwargs):
     activation.prepare()
+    if kwargs['owner']:
+        activation.task.owner = kwargs['owner']
     activation.process.question = kwargs['question']
     activation.done()
     return activation
@@ -70,6 +72,8 @@ def start_poll_error_flow(activation, **kwargs):
 @flow_signal(task_loader=lambda flow_task, **kwargs: kwargs['process'].get_task(PollErrorFlow.resolve))
 def resolve_poll_error_flow(activation, **kwargs):
     activation.prepare()
+    if kwargs['owner']:
+        activation.task.owner = kwargs['owner']
     activation.done()
     return activation
 
