@@ -83,7 +83,11 @@ class PollErrorFlow(Flow):
     start = flow.StartSignal(StartPollErrorFlowSignal, start_poll_error_flow) \
         .Next(this.resolve)
 
-    resolve = flow.Signal(ResolvePollErrorFlowSignal, resolve_poll_error_flow) \
+    resolve = flow.View(ProcessView, fields=[]) \
+        .Permission(auto_create=True) \
         .Next(this.end)
+    #
+    # resolve = flow.Signal(ResolvePollErrorFlowSignal, resolve_poll_error_flow) \
+    #     .Next(this.end)
 
     end = flow.End()

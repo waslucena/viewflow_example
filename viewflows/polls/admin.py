@@ -57,6 +57,10 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
                 StartPollErrorFlowSignal.send(sender=Question.__class__, question=obj, owner=request.user)
         else:
             if process:
-                ResolvePollErrorFlowSignal.send(sender=Question.__class__, process=process, owner=request.user)
+                task = process.get_task(PollErrorFlow.resolve)
+                activation = task.activate()
+                activation.prepare()
+                activation.done()
+                # ResolvePollErrorFlowSignal.send(sender=Question.__class__, process=process, owner=request.user)
 
 admin.site.register(Question, QuestionAdmin)

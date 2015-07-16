@@ -1,0 +1,11 @@
+{% extends 'viewflow/base.html' %}
+{% load viewflow %}
+
+{% block content %}
+<h1>{{ activation.flow_task }}</h1>
+
+{% include_process_data activation.process %}
+
+Please fix the problem in the Question itself
+
+{% endblock %}
