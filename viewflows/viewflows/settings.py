@@ -38,8 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'viewflow',
-    'viewflows.flows',
-    'viewflows.polls',
+    'flows',
+    'polls',
     'adminplus',
     'django_object_actions',
 )

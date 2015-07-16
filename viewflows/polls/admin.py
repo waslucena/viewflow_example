@@ -6,8 +6,8 @@ from django.utils.safestring import mark_safe
 from .models import Choice, Question
 
 from django_object_actions import DjangoObjectActions
-from ..flows.flows import PublishPollFlow, HelloWorldFlow
-from ..flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal, PollErrorFlow
+from flows.flows import PublishPollFlow, HelloWorldFlow
+from flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal, PollErrorFlow
 
 class ChoiceInline(admin.TabularInline):
     model = Choice

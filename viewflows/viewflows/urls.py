@@ -17,7 +17,7 @@ from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from viewflow import views as viewflow
-from .flows.flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow
+from flows.flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow
 
 admin.site = AdminSitePlus()
 admin.autodiscover()
