@@ -1,6 +1,6 @@
 Django==1.8.2
 mysqlclient
 celery
-git+ssh://git@github.com/evoloshchuk/viewflow.git
+git+ssh://git@github.com/viewflow/viewflow.git
 django-adminplus
 django-object-actions
