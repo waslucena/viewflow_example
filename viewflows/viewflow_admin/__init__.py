@@ -3,7 +3,7 @@ from viewflow.models import Task
 
 class ActivationDataForm(forms.ModelForm):
     started = forms.DateTimeField(widget=forms.HiddenInput)
-    comments = forms.CharField(widget=forms.Textarea)
+    comments = forms.CharField(widget=forms.Textarea, required=False)
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('prefix', '_viewflow_activation')
