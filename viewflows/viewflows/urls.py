@@ -23,33 +23,39 @@ admin.site = AdminSitePlus()
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/helloworld',
+    url(r'^admin/helloworld/',
         include([
             HelloWorldFlow.instance.urls,
             # url('^$', viewflow.ProcessListView.as_view(), name='index'),
             # url('^tasks/$', viewflow.TaskListView.as_view(), name='tasks'),
             # url('^queue/$', viewflow.QueueListView.as_view(), name='queue'),
             url('^details/(?P<process_pk>\d+)/$',
-                viewflow.ProcessDetailView.as_view(), name='details')
+                viewflow.ProcessDetailView.as_view(), name='details'),
+            url('^action/cancel/(?P<process_pk>\d+)/$',
+                viewflow.ProcessCancelView.as_view(), name='cancel')
             ],
             namespace=HelloWorldFlow.instance.namespace),
         {'flow_cls': HelloWorldFlow}),
-    url(r'^admin/publispoll',
+    url(r'^admin/publispoll/',
         include([
             PublishPollFlow.instance.urls,
             # url('^$', viewflow.ProcessListView.as_view(), name='index'),
             # url('^tasks/$', viewflow.TaskListView.as_view(), name='tasks'),
             # url('^queue/$', viewflow.QueueListView.as_view(), name='queue'),
             url('^details/(?P<process_pk>\d+)/$',
-                viewflow.ProcessDetailView.as_view(), name='details')
+                viewflow.ProcessDetailView.as_view(), name='details'),
+            url('^action/cancel/(?P<process_pk>\d+)/$',
+                viewflow.ProcessCancelView.as_view(), name='cancel')
             ],
             namespace=PublishPollFlow.instance.namespace),
         {'flow_cls': PublishPollFlow}),
-    url(r'^admin/errorpoll',
+    url(r'^admin/errorpoll/',
         include([
             PollErrorFlow.instance.urls,
             url('^details/(?P<process_pk>\d+)/$',
-                viewflow.ProcessDetailView.as_view(), name='details')
+                viewflow.ProcessDetailView.as_view(), name='details'),
+            url('^action/cancel/(?P<process_pk>\d+)/$',
+                viewflow.ProcessCancelView.as_view(), name='cancel')
             ],
             namespace=PollErrorFlow.instance.namespace),
         {'flow_cls': PollErrorFlow}),
