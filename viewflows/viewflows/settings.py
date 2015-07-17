@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'adminplus',
     'django_object_actions',
     'viewflow',
+    'viewflow_admin',
 )
 
 MIDDLEWARE_CLASSES = (
