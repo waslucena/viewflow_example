@@ -13,7 +13,7 @@ class HelloWorldFlow(Flow):
         .Permission(auto_create=True) \
         .Next(this.approve)
 
-    approve = flow.View(ProcessView, fields=["approved"]) \
+    approve = flow.View(ProcessView, fields=["approved"], task_description="Approve the request") \
         .Permission(auto_create=True) \
         .Next(this.validate_approve)
 
