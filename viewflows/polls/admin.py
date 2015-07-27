@@ -12,7 +12,14 @@ from flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal,\
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
-    extra = 3
+    extra = 0
+    readonly_fields = ['choice_text', 'votes']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
