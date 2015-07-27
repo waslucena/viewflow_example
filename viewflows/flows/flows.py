@@ -3,7 +3,8 @@ from viewflow import flow
 from viewflow.base import this, Flow
 from viewflow.views import StartProcessView, ProcessView
 from viewflow.flow import flow_signal
-from . import models
+from . import models, views
+from .nodes import DynamicSplit, ExtendedIf
 
 
 class HelloWorldFlow(Flow):
@@ -89,5 +90,60 @@ class PollErrorFlow(Flow):
     #
     # resolve = flow.Signal(ResolvePollErrorFlowSignal, resolve_poll_error_flow) \
     #     .Next(this.end)
+
+    end = flow.End()
+
+
+def start_build_poll_flow(activation, **kwargs):
+    activation.prepare()
+    activation.process.question = kwargs['question']
+    activation.process.split_count = kwargs['split_count']
+    activation.done()
+    return activation
+
+def create_poll(activation, **kwarg):
+    from polls.models import Choice
+    suggestion = models.ChoiceSuggestion.objects.get(
+            process=activation.process, approved=True, selected=True)
+    choice_text = suggestion.choice_text
+    question = activation.process.question
+    question.choice_set.add(Choice(choice_text=choice_text))
+    question.save()
+    return activation
+
+def suggestion_approved(process, task):
+    approve_task = task.previous.first()
+    suggest_task = approve_task.previous.first()
+    suggestion = models.ChoiceSuggestion.objects.get(
+            process=process, task=suggest_task)
+    return suggestion.approved
+
+class BuildPollFlow(Flow):
+    process_cls = models.PollBuildProcess
+
+    start = flow.StartFunction(start_build_poll_flow) \
+        .Next(this.spit)
+
+    spit = DynamicSplit(lambda p: p.split_count) \
+        .Next(this.suggest)
+
+    suggest = flow.View(views.SuggestionView) \
+        .Next(this.approve)
+
+    approve = flow.View(views.ApproveView) \
+        .Next(this.validate)
+
+    validate = ExtendedIf(cond=suggestion_approved) \
+        .OnTrue(this.join) \
+        .OnFalse(this.suggest)
+
+    join = flow.Join() \
+        .Next(this.select)
+
+    select = flow.View(views.SelectView) \
+        .Next(this.build)
+
+    build = flow.Handler(create_poll) \
+        .Next(this.end)
 
     end = flow.End()

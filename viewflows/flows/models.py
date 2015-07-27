@@ -1,5 +1,5 @@
 from django.db import models
-from viewflow.models import Process
+from viewflow.models import Process, Task
 
 
 class HelloWorldProcess(Process):
@@ -12,3 +12,15 @@ class PollProcess(Process):
 
 class PollErrorProcess(Process):
     question = models.ForeignKey('polls.Question', verbose_name='Question')
+
+
+class PollBuildProcess(Process):
+    question = models.ForeignKey('polls.Question', verbose_name='Question')
+    split_count = models.IntegerField(default=0)
+
+class ChoiceSuggestion(models.Model):
+    process = models.ForeignKey(PollBuildProcess)
+    task = models.ForeignKey(Task)
+    choice_text = models.CharField(max_length=50)
+    approved = models.BooleanField(default=False)
+    selected = models.BooleanField(default=False)

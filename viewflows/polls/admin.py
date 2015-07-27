@@ -7,7 +7,8 @@ from .models import Choice, Question
 
 from django_object_actions import DjangoObjectActions
 from flows.flows import PublishPollFlow, HelloWorldFlow
-from flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal, PollErrorFlow
+from flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal,\
+    PollErrorFlow, BuildPollFlow
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -44,7 +45,17 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
     hello_world.label = "Hello"
     hello_world.short_description = "Start Hello World process"
 
-    objectactions = ('publish_this', 'hello_world')
+    def build_this(self, request, obj):
+        activation = BuildPollFlow.start.run(question=obj, split_count=3)
+        process = activation.process
+
+        process_url = reverse('{}:details'.format(process.flow_cls.instance.namespace), kwargs={'process_pk': process.pk})
+        message = 'Build Poll Process <a href="{}">{}</a> has started'.format(process_url, process.pk)
+        messages.add_message(request, messages.SUCCESS, mark_safe(message))
+    build_this.label = "Build"
+    build_this.short_description = "Start Build Poll process"
+
+    objectactions = ('publish_this', 'hello_world', 'build_this')
 
     def save_model(self, request, obj, form, change):
         super(QuestionAdmin, self).save_model(request, obj, form, change)

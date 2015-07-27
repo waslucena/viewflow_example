@@ -17,7 +17,8 @@ from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from viewflow import views as viewflow
-from flows.flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow
+from flows.flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow,\
+    BuildPollFlow
 
 admin.site = AdminSitePlus()
 admin.autodiscover()
@@ -59,6 +60,16 @@ urlpatterns = [
             ],
             namespace=PollErrorFlow.instance.namespace),
         {'flow_cls': PollErrorFlow}),
+    url(r'^admin/buildpoll/',
+        include([
+            BuildPollFlow.instance.urls,
+            url('^details/(?P<process_pk>\d+)/$',
+                viewflow.ProcessDetailView.as_view(), name='details'),
+            url('^action/cancel/(?P<process_pk>\d+)/$',
+                viewflow.ProcessCancelView.as_view(), name='cancel')
+            ],
+            namespace=BuildPollFlow.instance.namespace),
+        {'flow_cls': BuildPollFlow}),
     url(r'^admin/', include(admin.site.urls)),
 ]
 
