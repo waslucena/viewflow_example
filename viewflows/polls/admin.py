@@ -19,7 +19,7 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = ['question_text']
     fieldsets = [
         (None,               {'fields': ['question_text']}),
-        ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+        ('Date information', {'fields': ['pub_date']}),
     ]
     inlines = [ChoiceInline]
 
