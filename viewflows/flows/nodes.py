@@ -2,9 +2,12 @@ from viewflow.activation import AbstractGateActivation
 from viewflow.flow import base
 from viewflow.flow import gates
 from viewflow.token import Token
+from viewflow.views import StartProcessView
 
 import traceback
 
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.utils.timezone import now
 
@@ -143,3 +146,17 @@ class Subprocess(base.NextNodeMixin, base.DetailsViewMixin, base.Gateway):
 
     def ready(self):
         signals.flow_finished.connect(self.on_flow_finished, sender=self.start_handler.flow_cls)
+
+
+class StartAdminView(StartProcessView):
+    def __init__(self, *args, **kwargs):
+        self.model = kwargs['model']
+        super(StartAdminView, self).__init__()
+
+    def get(self, request, *args, **kwargs):
+        url = reverse(
+            'admin:{}_{}_add'.format(
+                self.model._meta.app_label, self.model.__name__.lower()
+            )
+        )
+        return HttpResponseRedirect(url)

@@ -4,7 +4,8 @@ from viewflow.base import this, Flow
 from viewflow.views import StartProcessView, ProcessView
 from viewflow.flow import flow_signal
 from . import models, views
-from .nodes import DynamicSplit, ExtendedIf, Subprocess
+from .nodes import DynamicSplit, ExtendedIf, Subprocess, StartAdminView
+from polls.models import Question
 
 
 class HelloWorldFlow(Flow):
@@ -160,7 +161,10 @@ class CreatePollFlow(Flow):
 
     process_cls = models.PollCreateProcess
 
-    start = flow.StartFunction(_start_create_poll_process) \
+    start = flow.Start(StartAdminView, model=Question) \
+        .Next(this.build)
+
+    create = flow.StartFunction(_start_create_poll_process) \
         .Next(this.build)
 
     build = Subprocess(BuildPollFlow.start,
@@ -174,4 +178,4 @@ class CreatePollFlow(Flow):
         processes = cls.process_cls.objects.filter(
             question=question, status='NEW')
         if not processes.exists():
-            cls.start.run(question=question, owner=owner)
+            cls.create.run(question=question, owner=owner)
