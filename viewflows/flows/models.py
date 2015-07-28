@@ -15,6 +15,7 @@ class PollErrorProcess(Process):
 
 
 class PollBuildProcess(Process):
+    parent_task = models.ForeignKey(Task, blank=True, null=True)
     question = models.ForeignKey('polls.Question', verbose_name='Question')
     split_count = models.IntegerField(default=0)
 
@@ -24,3 +25,7 @@ class ChoiceSuggestion(models.Model):
     choice_text = models.CharField(max_length=50)
     approved = models.BooleanField(default=False)
     selected = models.BooleanField(default=False)
+
+
+class PollCreateProcess(Process):
+    question = models.ForeignKey('polls.Question', verbose_name='Question')

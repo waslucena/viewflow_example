@@ -1,6 +1,7 @@
 from django.contrib import admin
 from viewflow import views as viewflow
-from .flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow, BuildPollFlow
+from .flows import HelloWorldFlow, PublishPollFlow, PollErrorFlow,\
+    BuildPollFlow, CreatePollFlow
 
 # A HelloWorldFlow processes menus
 hello_world_flow_cls = HelloWorldFlow
@@ -42,8 +43,26 @@ admin.site.register_view('publishpoll/tasks', 'Update Poll My tasks',  view=upda
 admin.site.register_view('publishpoll/queue', 'Update Poll Queue',     view=update_poll_queue_list_view)
 
 
+# A CreatePollFlow processes menus
+def create_poll_process_list_view(request, *args, **kwargs):
+    kwargs['flow_cls'] = CreatePollFlow
+    return viewflow.ProcessListView.as_view()(request, *args, **kwargs)
+
+def create_poll_task_list_view(request, *args, **kwargs):
+    kwargs['flow_cls'] = CreatePollFlow
+    return viewflow.TaskListView.as_view()(request, *args, **kwargs)
+
+def create_poll_queue_list_view(request, *args, **kwargs):
+    kwargs['flow_cls'] = CreatePollFlow
+    return viewflow.QueueListView.as_view()(request, *args, **kwargs)
+
+admin.site.register_view('createpoll',       'Create Poll Processes', view=create_poll_process_list_view)
+admin.site.register_view('createpoll/tasks', 'Create Poll My tasks',  view=create_poll_task_list_view)
+admin.site.register_view('createpoll/queue', 'Create Poll Queue',     view=create_poll_queue_list_view)
+
+
 # All Flows processes menus
-all_flow_classes = [HelloWorldFlow, PublishPollFlow, PollErrorFlow, BuildPollFlow]
+all_flow_classes = [HelloWorldFlow, PublishPollFlow, PollErrorFlow, BuildPollFlow, CreatePollFlow]
 
 def all_process_list_view(request, *args, **kwargs):
     return viewflow.AllProcessListView.as_view(flow_classes=all_flow_classes)(request, *args, **kwargs)

@@ -2,9 +2,10 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 
 from viewflow.views import task
+from viewflow import flow
 
 from . import models
-
+from polls.models import Question
 
 class SuggestionView(task.TaskViewMixin, generic.CreateView):
     model = models.ChoiceSuggestion

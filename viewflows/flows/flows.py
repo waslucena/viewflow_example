@@ -4,7 +4,7 @@ from viewflow.base import this, Flow
 from viewflow.views import StartProcessView, ProcessView
 from viewflow.flow import flow_signal
 from . import models, views
-from .nodes import DynamicSplit, ExtendedIf
+from .nodes import DynamicSplit, ExtendedIf, Subprocess
 
 
 class HelloWorldFlow(Flow):
@@ -98,6 +98,7 @@ def start_build_poll_flow(activation, **kwargs):
     activation.prepare()
     activation.process.question = kwargs['question']
     activation.process.split_count = kwargs['split_count']
+    activation.process.parent_task = kwargs.get('parent_task')
     activation.done()
     return activation
 
@@ -147,3 +148,30 @@ class BuildPollFlow(Flow):
         .Next(this.end)
 
     end = flow.End()
+
+
+class CreatePollFlow(Flow):
+    def _start_create_poll_process(activation, **kwargs):
+        activation.prepare()
+        activation.process.question = kwargs['question']
+        activation.task.owner = kwargs.get('owner')
+        activation.done()
+        return activation
+
+    process_cls = models.PollCreateProcess
+
+    start = flow.StartFunction(_start_create_poll_process) \
+        .Next(this.build)
+
+    build = Subprocess(BuildPollFlow.start,
+                       lambda p: {'question': p.question, 'split_count': 3}) \
+        .Next(this.end)
+
+    end = flow.End()
+
+    @classmethod
+    def start_process(cls, question, owner=None):
+        processes = cls.process_cls.objects.filter(
+            question=question, status='NEW')
+        if not processes.exists():
+            cls.start.run(question=question, owner=owner)

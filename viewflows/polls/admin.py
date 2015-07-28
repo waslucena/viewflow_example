@@ -8,7 +8,7 @@ from .models import Choice, Question
 from django_object_actions import DjangoObjectActions
 from flows.flows import PublishPollFlow, HelloWorldFlow
 from flows.flows import StartPollErrorFlowSignal, ResolvePollErrorFlowSignal,\
-    PollErrorFlow, BuildPollFlow
+    PollErrorFlow, BuildPollFlow, CreatePollFlow
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -65,6 +65,7 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
     objectactions = ('publish_this', 'hello_world', 'build_this')
 
     def save_model(self, request, obj, form, change):
+        is_new = obj.pk is None
         super(QuestionAdmin, self).save_model(request, obj, form, change)
         try:
             process = PollErrorFlow.process_cls.objects.get(question=obj, status='NEW')
@@ -80,5 +81,7 @@ class QuestionAdmin(DjangoObjectActions, admin.ModelAdmin):
                 activation.prepare()
                 activation.done()
                 # ResolvePollErrorFlowSignal.send(sender=Question.__class__, process=process, owner=request.user)
+        if is_new:
+            CreatePollFlow.start_process(question=obj, owner=request.user)
 
 admin.site.register(Question, QuestionAdmin)
